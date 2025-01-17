@@ -27,6 +27,7 @@ let
 
   existing_library_paths = builtins.getEnv "LD_LIBRARY_PATH";
 
+
   font_name = {
     mono = "NotoMono Nerd Font";
     sans_serif = "NotoSans Nerd Font";
@@ -75,6 +76,8 @@ let
 
   secrets = import ./secrets.nix;
   mimeTypesFiles = import ./mimeTypes.nix;
+
+  # operator-caska-typeface = pkgs.callPackage ./operator_caska.nix {inherit pkgs};
 in
 {
   imports = [
@@ -1029,6 +1032,7 @@ in
   };
 
   fonts = {
+    fontDir.enable = true;
     enableDefaultPackages = false;
     packages = with pkgs; [
       corefonts
@@ -1038,6 +1042,7 @@ in
       noto-fonts-cjk-serif
       noto-fonts-color-emoji
       noto-fonts-lgc-plus
+      # operator-caska-typeface
     ];
 
     fontconfig = {
