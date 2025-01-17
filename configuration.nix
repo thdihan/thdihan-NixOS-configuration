@@ -298,16 +298,35 @@ in
   };
 
   security = {
-    rtkit.enable = true;
+
+    allowSimultaneousMultithreading = true;
+    tpm2.enable = true;
+    lockKernelModules = false;
+
+    pam.services.hyprlock = {
+      fprintAuth = true;
+    };
+    
+    sudo = {
+      enable = true;
+      execWheelOnly = true;
+      wheelNeedsPassword = true;
+    };
 
     polkit = {
       enable = true;
     };
 
-    pam.services.hyprlock = {
+    soteria.enable = true;
+
+    rtkit.enable = true;
+    wrappers = {
+      spice-client-glib-usb-acl-helper.source = "${pkgs.spice-gtk}/bin/spice-client-glib-usb-acl-helper";
     };
 
-    wrappers.spice-client-glib-usb-acl-helper.source = "${pkgs.spice-gtk}/bin/spice-client-glib-usb-acl-helper";
+    audit = {
+      enable = true;
+    };
   };
 
   hardware = {
@@ -367,7 +386,7 @@ in
         ovmf = {
           enable = true;
           packages = [
-            (pkgs.OVMF.override {
+            (pkgs.OVMFFull.override {
               secureBoot = true;
               tpmSupport = true;
             }).fd
@@ -393,9 +412,15 @@ in
       cloudflare-warp
     ];
 
-    targets.multi-user.wants = [
-      "warp-svc.service"
-    ];
+    globalEnvironment = { };
+
+    targets = {
+      multi-user.wants = [
+        "warp-svc.service"
+      ];
+    };
+
+
   };
 
   services = {
@@ -473,6 +498,7 @@ in
       packages = with pkgs; [
         android-udev-rules
         game-devices-udev-rules
+        libmtp.out
         rtl-sdr
         usb-blaster-udev-rules
       ];
@@ -831,13 +857,13 @@ in
 
     uwsm = {
       enable = true;
-      waylandCompositors = {
-        hyprland = {
-          prettyName = "Hyprland";
-          comment = "Hyprland compositor managed by UWSM";
-          binPath = "/run/current-system/sw/bin/Hyprland";
-        };
-      };
+      # waylandCompositors = {
+      #   hyprland = {
+      #     prettyName = "Hyprland";
+      #     comment = "Hyprland compositor managed by UWSM";
+      #     binPath = "/run/current-system/sw/bin/Hyprland";
+      #   };
+      # };
     };
 
     hyprland = {
@@ -857,9 +883,7 @@ in
       completion.enable = true;
       enableLsColors = true;
 
-      shellAliases = {
-        clean_build = "sudo nix-channel --update && sudo nix-env -u --always && sudo rm -rf /nix/var/nix/gcroots/auto/* && sudo nix-collect-garbage -d && nix-collect-garbage -d && sudo nix-store --gc && sudo nixos-rebuild switch --upgrade-all";
-      };
+      shellAliases = { };
 
       loginShellInit = '' '';
 
@@ -891,12 +915,31 @@ in
       dirmngr.enable = true;
     };
 
-    adb.enable = true;
 
     nm-applet = {
       enable = true;
       indicator = true;
     };
+
+    git = {
+      enable = true;
+      package = pkgs.gitFull;
+      lfs = {
+        enable = true;
+        enablePureSSHTransfer = true;
+      };
+      prompt.enable = true;
+      config = {
+        init = {
+          defaultBranch = "main";
+        };
+      };
+    };
+
+    adb.enable = true;
+    usbtop.enable = true;
+
+
 
     virt-manager.enable = true;
 
@@ -1027,6 +1070,19 @@ in
   };
 
   environment = {
+
+    enableDebugInfo = false;
+    enableAllTerminfo = true;
+
+    wordlist = {
+      enable = true;
+      # lists = ;
+    };
+
+    homeBinInPath = true;
+    localBinInPath = true;
+    stub-ld.enable = true;
+
     variables = pkgs.lib.mkForce {
       ANDROID_SDK_ROOT = android_sdk_path;
       ANDROID_HOME = android_sdk_path;
@@ -1039,10 +1095,19 @@ in
       CHROME_EXECUTABLE = "chromium";
     };
 
+    shellAliases = {
+      clean_build = "sudo nix-channel --update && sudo nix-env -u --always && sudo rm -rf /nix/var/nix/gcroots/auto/* && sudo nix-collect-garbage -d && nix-collect-garbage -d && sudo nix-store --gc && sudo nixos-rebuild switch --install-bootloader --upgrade-all";
+    };
+    extraInit = '' '';
+
     loginShellInit = ''
       rm -rf ~/.android/avd
       ln -sf ~/.config/.android/avd ~/.android/avd
     '';
+
+    shellInit = '' '';
+    interactiveShellInit = '' '';
+
 
     systemPackages = with pkgs; [
       acl
@@ -1997,105 +2062,92 @@ in
             extraConfig = '' '';
           };
 
-          rofi = {
-            enable = true;
-            package = pkgs.rofi-wayland;
-            plugins = with pkgs; [
+          rofi =
+            let
+              rofi_theme = pkgs.writeTextFile {
+                name = "Rofi_Theme.rasi";
+                text = ''
+                  * {
+                    margin: 0;
+                    background-color: transparent;
+                    padding: 0;
+                    spacing: 0;
+                    text-color: ${dracula_theme.hex.foreground};
+                  }
+                  window {
+                    width: 768px;
+                    border: 1px;
+                    border-radius: 16px;
+                    border-color: ${dracula_theme.hex.purple};
+                    background-color: ${dracula_theme.hex.background};
+                  }
+                  mainbox {
+                    padding: 16px;
+                  }
+                  inputbar {
+                    border: 1px;
+                    border-radius: 8px;
+                    border-color: ${dracula_theme.hex.comment};
+                    background-color: ${dracula_theme.hex.current_line};
+                    padding: 8px;
+                    spacing: 8px;
+                    children: [ "prompt", "entry" ];
+                  }
+                  prompt {
+                    text-color: ${dracula_theme.hex.foreground};
+                  }
+                  entry {
+                    placeholder-color: ${dracula_theme.hex.comment};
+                    placeholder: "Search";
+                  }
+                  listview {
+                    margin: 16px 0px 0px 0px;
+                    fixed-height: false;
+                    lines: 8;
+                    columns: 2;
+                  }
+                  element {
+                    border-radius: 8px;
+                    padding: 8px;
+                    spacing: 8px;
+                    children: [ "element-icon", "element-text" ];
+                  }
+                  element-icon {
+                    vertical-align: 0.5;
+                    size: 1em;
+                  }
+                  element-text {
+                    text-color: inherit;
+                  }
+                  element.selected {
+                    background-color: ${dracula_theme.hex.current_line};
+                  }
+                '';
+              };
+            in
+            {
+              enable = true;
+              package = pkgs.rofi-wayland;
+              plugins = with pkgs; [
 
-            ];
+              ];
 
-            cycle = false;
-            terminal = "${pkgs.kitty}/bin/kitty";
+              cycle = false;
+              terminal = "${pkgs.kitty}/bin/kitty";
 
-            location = "center";
+              location = "center";
 
-            font = "${font_name.sans_serif} 11";
+              font = "${font_name.sans_serif} 11";
 
-            extraConfig = {
-              show-icons = true;
-              display-drun = "Applications";
+              extraConfig = {
+                show-icons = true;
+                display-drun = "Applications";
 
-              disable-history = false;
+                disable-history = false;
+              };
+
+              theme = "${rofi_theme}";
             };
-
-            # theme =
-            #   let
-            #     inherit (config.home-manager.lib.formats.rasi) mkLiteral;
-            #   in
-            #   {
-            #     "*" = {
-            #       margin = 0;
-            #       background-color = mkLiteral "transparent";
-            #       padding = 0;
-            #       spacing = 0;
-            #       text-color = mkLiteral dracula_theme.hex.foreground;
-            #     };
-
-            #     "window" = {
-            #       width = mkLiteral "768px";
-            #       border = mkLiteral "1px";
-            #       border-radius = mkLiteral "16px";
-            #       border-color = mkLiteral dracula_theme.hex.purple;
-            #       background-color = mkLiteral dracula_theme.hex.background;
-            #     };
-
-            #     "mainbox" = {
-            #       padding = mkLiteral "16px";
-            #     };
-
-            #     "inputbar" = {
-            #       border = mkLiteral "1px";
-            #       border-radius = mkLiteral "8px";
-            #       border-color = mkLiteral dracula_theme.hex.comment;
-            #       background-color = mkLiteral dracula_theme.hex.current_line;
-            #       padding = mkLiteral "8px";
-            #       spacing = mkLiteral "8px";
-            #       children = map mkLiteral [
-            #         "prompt"
-            #         "entry"
-            #       ];
-            #     };
-
-            #     "prompt" = {
-            #       text-color = mkLiteral dracula_theme.hex.foreground;
-            #     };
-
-            #     "entry" = {
-            #       placeholder-color = mkLiteral dracula_theme.hex.comment;
-            #       placeholder = "Search";
-            #     };
-
-            #     "listview" = {
-            #       margin = mkLiteral "16px 0px 0px 0px";
-            #       fixed-height = false;
-            #       lines = 8;
-            #       columns = 2;
-            #     };
-
-            #     "element" = {
-            #       border-radius = mkLiteral "8px";
-            #       padding = mkLiteral "8px";
-            #       spacing = mkLiteral "8px";
-            #       children = map mkLiteral [
-            #         "element-icon"
-            #         "element-text"
-            #       ];
-            #     };
-
-            #     "element-icon" = {
-            #       vertical-align = mkLiteral "0.5";
-            #       size = mkLiteral "1em";
-            #     };
-
-            #     "element-text" = {
-            #       text-color = mkLiteral "inherit";
-            #     };
-
-            #     "element.selected" = {
-            #       background-color = mkLiteral dracula_theme.hex.current_line;
-            #     };
-            #   };
-          };
 
           waybar = {
             enable = true;
