@@ -358,6 +358,7 @@ in
       enable = true;
 
       qemu = {
+        # package = pkgs.qemu.all  (BitsCoper Config: Ask why?)
         package = pkgs.qemu_kvm;
         runAsRoot = true;
 
@@ -913,7 +914,13 @@ in
       ];
     };
 
-    thunderbird.enable = true;
+    thunderbird = {
+      enable = true;
+      package = pkgs.thunderbird-latest;
+      preferences = { };
+    };
+
+
 
     dconf = {
       enable = true;
@@ -1072,7 +1079,7 @@ in
       cups-filters
       cups-pdf-to-pdf
       cups-printers
-      curl
+      curlFull
       curtail
       d-spy
       dart
@@ -1087,12 +1094,14 @@ in
       fd
       fdk_aac
       ffmpeg-full
+      fh
       file
       flutter327
       fritzing
       fwupd-efi
       gcc
       gdb
+      gh
       gimp-with-plugins
       git
       git-doc
@@ -1100,7 +1109,10 @@ in
       glibc
       gnome-font-viewer
       gnugrep
+      gnulib
       gnumake
+      gnused
+      gnutls
       gource
       gpredict
       gradle
@@ -1115,6 +1127,8 @@ in
       hyprpicker
       hyprpolkitagent
       i2c-tools
+      ideviceinstaller
+      idevicerestore
       iftop
       inotify-tools
       jellyfin-media-player
@@ -1140,9 +1154,12 @@ in
       libgpg-error
       libguestfs
       libheif
+      libideviceactivation
+      libimobiledevice
       libnotify
       libopus
       libosinfo
+      libportal
       libreoffice-fresh
       libtinfo
       libusb1
@@ -1166,6 +1183,8 @@ in
       nix-info
       nixos-icons
       nixpkgs-fmt
+      nixpkgs-lint
+      nixpkgs-review
       nmap
       obs-studio
       oculante
@@ -1231,6 +1250,7 @@ in
       waylevel
       wev
       wget
+      which
       wireplumber
       wireshark
       wl-clipboard
@@ -1477,6 +1497,8 @@ in
 
               "SUPER SHIFT, F, togglefloating,"
               "SUPER SHIFT, T, togglesplit,"
+              "SUPER SHIFT, F, togglefloating,"
+              ", F11, fullscreen, 0"
               "SUPER, Q, killactive,"
 
               "SUPER SHIFT, 1, movetoworkspace, 1"
