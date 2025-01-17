@@ -77,7 +77,7 @@ let
   secrets = import ./secrets.nix;
   mimeTypesFiles = import ./mimeTypes.nix;
 
-  # operator-caska-typeface = pkgs.callPackage ./operator_caska.nix {inherit pkgs};
+  operator-caska-typeface = pkgs.callPackage ./custom_fonts/operator_caska.nix {};
 in
 {
   imports = [
@@ -1042,7 +1042,7 @@ in
       noto-fonts-cjk-serif
       noto-fonts-color-emoji
       noto-fonts-lgc-plus
-      # operator-caska-typeface
+      operator-caska-typeface
     ];
 
     fontconfig = {
