@@ -1638,7 +1638,7 @@ in
               focus_on_close = 1;
 
               left_handed = false;
-              sensitivity = 1; # Mouse
+              sensitivity = 0.6; # Mouse
               natural_scroll = false;
 
               touchpad = {
