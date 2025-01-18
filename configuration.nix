@@ -1102,6 +1102,10 @@ in
 
     shellAliases = {
       clean_build = "sudo nix-channel --update && sudo nix-env -u --always && sudo rm -rf /nix/var/nix/gcroots/auto/* && sudo nix-collect-garbage -d && nix-collect-garbage -d && sudo nix-store --gc && sudo nixos-rebuild switch --install-bootloader --upgrade-all";
+
+      code = "flatpak run com.visualstudio.code"; # flatpak vscode alias.
+      pn = "pnpm"; # pnpm package manager for javascript
+      warp-test = "curl https://www.cloudflare.com/cdn-cgi/trace/"; # test warp vpn connection
     };
     extraInit = '' '';
 
@@ -1256,6 +1260,7 @@ in
       nixpkgs-lint
       nixpkgs-review
       nmap
+      nodejs_23
       obs-studio
       oculante
       onedrive
@@ -1269,6 +1274,7 @@ in
       pipewire
       pkg-config
       playerctl
+      pnpm
       podman-compose
       podman-desktop
       podman-tui
