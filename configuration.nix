@@ -1,4 +1,5 @@
-# By Abdullah As-Sadeed
+# By Tanvir Hossain Dihan - thdihan (https://github.com/thdihan)
+# Original config written by BitsCoper (https://github.com/bitscoper)
 
 { config
 , pkgs
