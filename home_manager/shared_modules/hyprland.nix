@@ -3,6 +3,7 @@ let
   global = import /etc/nixos/constants/global.nix {pkgs = pkgs; config = config; builtins = builtins;};
   home-manager = global.home-manager;
   cursor = global.cursor;
+  font_name = global.font_name;
 in
 {
   imports = [
@@ -37,16 +38,18 @@ in
             ];
 
             exec-once = [
-              "systemctl --user start hyprpolkitagent & adb start-server &"
               "sleep 2 && uwsm app -- keepassxc"
-              "uwsm app -- wl-paste --type text --watch cliphist store"
-              "uwsm app -- wl-paste --type image --watch cliphist store"
-              "sleep 2 && systemctl --user start warp-taskbar"
-              "uwsm app -- sdkmanager --licenses"
+
+              "wl-paste --type text --watch cliphist store"
+              "wl-paste --type image --watch cliphist store"
+
+              "setfacl --modify user:jellyfin:--x ~ & adb start-server &"
+
+              "systemctl --user start warp-taskbar"
             ];
 
             bind = [
-              "SUPER, L, exec, uwsm app -- hyprlock --immediate"
+              "SUPER, L, exec, hyprlock --immediate"
               "SUPER CTRL, L, exec, uwsm stop"
               "SUPER CTRL, P, exec, systemctl poweroff"
               "SUPER CTRL, R, exec, systemctl reboot"
@@ -70,7 +73,6 @@ in
               "SUPER, up, movefocus, u"
               "SUPER, down, movefocus, d"
 
-              "SUPER SHIFT, F, togglefloating,"
               "SUPER SHIFT, T, togglesplit,"
               "SUPER SHIFT, F, togglefloating,"
               ", F11, fullscreen, 0"
@@ -104,25 +106,29 @@ in
 
               ", PRINT, exec, filename=\"$(xdg-user-dir DOWNLOAD)/Screenshot_$(date +'%Y-%B-%d_%I-%M-%S_%p').png\"; grim -g \"$(slurp -d)\" -t png -l 9 \"$filename\" && wl-copy < \"$filename\""
 
-              "SUPER, R, exec, uwsm app -- rofi -show drun"
-              "SUPER, T, exec, uwsm app -- kitty"
+              "SUPER, R, exec, rofi -show drun"
+              "SUPER SHIFT, R, exec, rofi -show run"
 
-              ", XF86Explorer, exec, uwsm app -- kitty sh -c \"superfile\""
-              "SUPER, E, exec, uwsm app -- kitty sh -c \"superfile\""
+              "SUPER, T, exec, kitty"
+              "SUPER ALT, T, exec, kitty sh -c \"fish\""
 
-              "SUPER, F, exec, uwsm app -- kitty --hold sh -c \"fastfetch --thread true --detect-version true --logo-preserve-aspect-ratio true --temp-unit c --title-fqdn true --disk-show-regular true --disk-show-external true --disk-show-hidden true --disk-show-subvolumes true --disk-show-readonly true --disk-show-unknown true --physicaldisk-temp true --bluetooth-show-disconnected true --display-precise-refresh-rate true --cpu-temp true --cpu-show-pe-core-count true --cpuusage-separate true --gpu-temp true --gpu-driver-specific true --battery-temp true --localip-show-ipv4 true --localip-show-ipv6 true --localip-show-mac true --localip-show-loop true --localip-show-mtu true --localip-show-speed true --localip-show-prefix-len true --localip-show-all-ips true --localip-show-flags true --wm-detect-plugin true\""
-              "SUPER, B, exec, uwsm app -- kitty sh -c \"btop\""
+              ", XF86Explorer, exec, pcmanfm"
+              "SUPER, E, exec, pcmanfm"
 
-              "SUPER, W, exec, uwsm app -- firefox"
-              "SUPER ALT, W, exec, uwsm app -- firefox --private-window"
+              "SUPER, F, exec, kitty --hold sh -c \"fastfetch --thread true --detect-version true --logo-preserve-aspect-ratio true --temp-unit c --title-fqdn true --disk-show-regular true --disk-show-external true --disk-show-hidden true --disk-show-subvolumes true --disk-show-readonly true --disk-show-unknown true --physicaldisk-temp true --bluetooth-show-disconnected true --display-precise-refresh-rate true --cpu-temp true --cpu-show-pe-core-count true --cpuusage-separate true --gpu-temp true --gpu-driver-specific true --battery-temp true --localip-show-ipv4 true --localip-show-ipv6 true --localip-show-mac true --localip-show-loop true --localip-show-mtu true --localip-show-speed true --localip-show-prefix-len true --localip-show-all-ips true --localip-show-flags true --wm-detect-plugin true\""
 
-              ", XF86Mail, exec, uwsm app -- thunderbird"
-              "SUPER, M, exec, uwsm app -- thunderbird"
+              "SUPER, B, exec, kitty sh -c \"btop\""
 
-              "SUPER, C, exec, uwsm app -- code"
-              "SUPER, D, exec, uwsm app -- dbeaver"
+              "SUPER, W, exec, firefox"
+              "SUPER ALT, W, exec, firefox --private-window"
 
-              "SUPER, V, exec, uwsm app -- vlc"
+              ", XF86Mail, exec, thunderbird"
+              "SUPER, M, exec, thunderbird"
+
+              "SUPER, C, exec, code"
+              "SUPER, D, exec, dbeaver"
+
+              "SUPER, V, exec, vlc"
             ];
 
             bindm = [
@@ -187,10 +193,10 @@ in
               mouse_move_focuses_monitor = true;
 
               disable_hyprland_logo = false;
-              force_default_wallpaper = 0;
+              force_default_wallpaper = 1;
               disable_splash_rendering = true;
 
-              font_family = "NotoSans Nerd Font";
+              font_family = font_name.sans_serif;
 
               close_special_on_empty = true;
 

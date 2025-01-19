@@ -164,7 +164,7 @@ in
                   on-scroll-up = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 1%+";
                   on-scroll-down = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 1%-";
 
-                  on-click = "uwsm app -- pavucontrol";
+                  on-click = "pavucontrol";
                 };
 
                 bluetooth = {
@@ -210,7 +210,7 @@ in
                   tooltip-format-ethernet = "Interface: {ifname}\nGateway: {gwaddr}\nSubnet Mask: {netmask}\nCIDR Notation= {cidr}\nIP Address: {ipaddr}\nUp Speed: {bandwidthUpBytes}\nDown Speed: {bandwidthDownBytes}\nTotal Speed: {bandwidthTotalBytes}";
                   tooltip-format-wifi = "Interface: {ifname}\nESSID: {essid}\nFrequency: {frequency} GHz\nStrength: {signaldBm} dBm ({signalStrength}%)\nGateway: {gwaddr}\nSubnet Mask: {netmask}\nCIDR Notation: {cidr}\nIP Address: {ipaddr}\nUp Speed: {bandwidthUpBytes}\nDown Speed: {bandwidthDownBytes}\nTotal Speed: {bandwidthTotalBytes}";
 
-                  on-click = "uwsm app -- nm-connection-editor";
+                  on-click = "nm-connection-editor";
                 };
 
                 clock = {
@@ -293,7 +293,7 @@ in
                   tooltip = true;
                   tooltip-format = "Total: {specific_total} GB\nUsed: {specific_used} GB ({percentage_used}%)\nFree: {specific_free} GB ({percentage_free}%)";
 
-                  on-click = "uwsm app -- kitty sh -c \"btop\"";
+                  on-click = "kitty sh -c \"btop\"";
                 };
 
                 memory = {
@@ -304,7 +304,7 @@ in
                   tooltip = true;
                   tooltip-format = "Used RAM: {used} GiB ({percentage}%)\nUsed Swap: {swapUsed} GiB ({swapPercentage}%)\nAvailable RAM: {avail} GiB\nAvailable Swap: {swapAvail} GiB";
 
-                  on-click = "uwsm app -- kitty sh -c \"btop\"";
+                  on-click = "kitty sh -c \"btop\"";
                 };
 
                 cpu = {
@@ -314,7 +314,7 @@ in
 
                   tooltip = true;
 
-                  on-click = "uwsm app -- kitty sh -c \"btop\"";
+                  on-click = "kitty sh -c \"btop\"";
                 };
 
                 battery = {
@@ -347,7 +347,7 @@ in
                   tooltip = true;
                   tooltip-format = "Capacity: {capacity}%\nPower: {power} W\n{timeTo}\nCycles: {cycles}\nHealth: {health}%";
 
-                  on-click = "uwsm app -- kitty sh -c \"btop\"";
+                  on-click = "kitty sh -c \"btop\"";
                 };
               };
 

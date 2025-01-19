@@ -1,5 +1,13 @@
 {pkgs,config,...}:
 let
+
+  global = import /etc/nixos/constants/global.nix {pkgs = pkgs; config = config; builtins = builtins;};
+  home-manager = global.home-manager;
+  cursor = global.cursor;
+  font_name = global.font_name;
+  wallpaper = global.wallpaper;
+  dracula_theme = global.dracula_theme;
+  
   packagesList = with pkgs; [
       acl
       agi
@@ -11,6 +19,7 @@ let
       aribb24
       aribb25
       audacity
+      audit
       avrdude
       bat
       bleachbit
@@ -80,7 +89,6 @@ let
       gpredict
       gradle
       gradle-completion
-      greetd.tuigreet
       grim
       guestfs-tools
       gzip
@@ -94,6 +102,7 @@ let
       ideviceinstaller
       idevicerestore
       iftop
+      image-roll
       inotify-tools
       jellyfin-media-player
       jfsutils
@@ -126,6 +135,7 @@ let
       libideviceactivation
       libimobiledevice
       libnotify
+      libopenraw
       libopus
       libosinfo
       libportal
@@ -137,6 +147,7 @@ let
       libvirt
       libvpx
       libwebp
+      libxfs
       lsof
       lvm2
       lynis
@@ -161,7 +172,6 @@ let
       ntfs3g
       nodejs_23
       obs-studio
-      oculante
       onedrive
       onionshare-gui
       openssl
@@ -246,6 +256,7 @@ let
       xdg-user-dirs
       xdg-utils
       xfsdump
+      xfstests
       xfsprogs
       xorg.xhost
       xoscope
@@ -253,6 +264,82 @@ let
       yaml-language-server
       yt-dlp
       zip
+      (sddm-astronaut.override {
+        embeddedTheme = "astronaut";
+
+        themeConfig = {
+          # ScreenWidth = 1920;
+          # ScreenHeight = 1080;
+          ScreenPadding = 0;
+
+          BackgroundColor = dracula_theme.hex.background;
+          BackgroundHorizontalAlignment = "center";
+          BackgroundVerticalAlignment = "center";
+          Background = wallpaper;
+          CropBackground = false;
+          DimBackgroundImage = "0.0";
+
+          FullBlur = false;
+          PartialBlur = false;
+
+          HaveFormBackground = false;
+          FormPosition = "center";
+
+          HideLoginButton = false;
+          HideSystemButtons = false;
+          HideVirtualKeyboard = false;
+          VirtualKeyboardPosition = "center";
+
+          # MainColor = ;
+          # AccentColor = ;
+
+          # HighlightBorderColor= ;
+          # HighlightBackgroundColor= ;
+          # HighlightTextColor= ;
+
+          HeaderTextColor = dracula_theme.hex.foreground;
+          TimeTextColor = dracula_theme.hex.foreground;
+          DateTextColor = dracula_theme.hex.foreground;
+
+          IconColor = dracula_theme.hex.foreground;
+          PlaceholderTextColor = dracula_theme.hex.foreground;
+          WarningColor = dracula_theme.hex.red;
+
+          # LoginFieldBackgroundColor = ;
+          # LoginFieldTextColor = ;
+          # UserIconColor = ;
+          # HoverUserIconColor = ;
+
+          # PasswordFieldBackgroundColor = ;
+          # PasswordFieldTextColor = ;
+          # PasswordIconColor = ;
+          # HoverPasswordIconColor = ;
+
+          # LoginButtonBackgroundColor = ;
+          LoginButtonTextColor = dracula_theme.hex.foreground;
+
+          SystemButtonsIconsColor = dracula_theme.hex.foreground;
+          # HoverSystemButtonsIconsColor = ;
+
+          SessionButtonTextColor = dracula_theme.hex.foreground;
+          # HoverSessionButtonTextColor = ;
+
+          VirtualKeyboardButtonTextColor = dracula_theme.hex.foreground;
+          # HoverVirtualKeyboardButtonTextColor = ;
+
+          DropdownBackgroundColor = dracula_theme.hex.background;
+          DropdownSelectedBackgroundColor = dracula_theme.hex.current_line;
+          DropdownTextColor = dracula_theme.hex.foreground;
+
+          HeaderText = "Welcome";
+
+          HourFormat = "\"hh:mm A\"";
+          DateFormat = "\"MMMM dd, yyyy\"";
+
+          PasswordFocus = true;
+          AllowEmptyPassword = false;
+        };
+      })
     ] ++
     (with unixtools; [
       arp

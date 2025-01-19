@@ -12,7 +12,7 @@ let
   operator-caska-typeface = pkgs.callPackage ./custom_fonts/operator_caska.nix {};
 
   # Imports
-  mimeTypesFiles = import ./constants/mimeTypes.nix;
+  mimeTypesFiles = import ./constants/mime_types.nix;
   secrets = import ./secrets.nix;
   global = import ./constants/global.nix {pkgs = pkgs; config = config; builtins = builtins;};
 
@@ -171,7 +171,6 @@ in
 
     config = {
       allowUnfree = true;
-      android_sdk.accept_license = true;
     };
 
     # overlays = [
@@ -424,8 +423,41 @@ in
 
     displayManager = {
       enable = true;
+      preStart = '''';
+
+      sddm = {
+        enable = true;
+        package = pkgs.kdePackages.sddm; # Qt 6
+
+        extraPackages = with pkgs; [
+          kdePackages.qtmultimedia
+        ];
+
+        wayland = {
+          enable = true;
+          compositor = "weston";
+        };
+
+        enableHidpi = true;
+        theme = "sddm-astronaut-theme";
+
+        autoNumlock = true;
+
+        autoLogin.relogin = false;
+
+        settings = {
+          Theme = {
+            CursorTheme = cursor.theme.name;
+            CursorSize = cursor.size;
+
+            Font = font_name.sans_serif;
+          };
+        };
+
+        stopScript = '''';
+      };
+
       defaultSession = "hyprland-uwsm";
-      preStart = '' '';
 
       autoLogin = {
         enable = false;
@@ -436,17 +468,6 @@ in
       logToFile = true;
     };
 
-    greetd = {
-      enable = true;
-      restart = true;
-
-      settings = {
-        default_session = {
-          command = "tuigreet --time --user-menu --greet-align center --asterisks --asterisks-char \"*\" --cmd \"uwsm start -S -F /run/current-system/sw/bin/Hyprland\"";
-          user = "greeter";
-        };
-      };
-    };
 
     udev = {
       enable = true;
@@ -804,6 +825,7 @@ in
       ];
     };
 
+
     java = {
       enable = true;
       package = pkgs.jdk23;
@@ -825,7 +847,6 @@ in
 
     appimage.enable = true;
 
-    nix-index.enableBashIntegration = true;
 
     bash = {
       completion.enable = true;
@@ -840,6 +861,34 @@ in
       interactiveShellInit = ''
         PROMPT_COMMAND="history -a"
       '';
+    };
+
+    fish = {
+      enable = true;
+      vendor = {
+        config.enable = true;
+        functions.enable = true;
+        completions.enable = true;
+      };
+      shellAbbrs = { };
+      shellAliases = { };
+      promptInit = '''';
+      loginShellInit = '''';
+      shellInit = '''';
+      interactiveShellInit = '''';
+    };
+    direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+      loadInNixShell = true;
+      enableBashIntegration = true;
+      enableFishIntegration = true;
+      direnvrcExtra = '''';
+      silent = false;
+    };
+    nix-index = {
+      enableBashIntegration = true;
+      enableFishIntegration = true;
     };
 
     ssh = {
